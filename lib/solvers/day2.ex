@@ -4,21 +4,38 @@ defmodule Aoc.Solvers.Day2 do
   @impl Aoc.Solver
   def solve(1, input) do
     parse_input(input)
-    |> Enum.count(&check_requirement/1)
+    |> Enum.count(&check_count_requirement/1)
   end
 
-  defp check_requirement({min_count, max_count, letter, password}) do
+  def solve(2, input) do
+    parse_input(input)
+    |> Enum.count(&check_position_requirement/1)
+  end
+
+  defp check_count_requirement({min_count, max_count, letter, password}) do
     Enum.count(String.graphemes(password), fn char -> char == letter end) in min_count..max_count
+  end
+
+  defp check_position_requirement({pos1, pos2, letter, password}) do
+    check1 = String.at(password, pos1 - 1) == letter
+    check2 = String.at(password, pos2 - 1) == letter
+
+    case {check1, check2} do
+      {false, false} -> false
+      {false, true} -> true
+      {true, false} -> true
+      {true, true} -> false
+    end
   end
 
   # Line example: 1-10 a: aaabbbcccddee
   defp parse_line(line) do
-    [counts, letter, password] = String.split(line)
-    [min_count, max_count] = String.split(counts, "-")
+    [numbers, letter, password] = String.split(line)
+    [first_num, second_num] = String.split(numbers, "-")
 
     {
-      String.to_integer(min_count),
-      String.to_integer(max_count),
+      String.to_integer(first_num),
+      String.to_integer(second_num),
       String.trim(letter, ":"),
       password
     }
