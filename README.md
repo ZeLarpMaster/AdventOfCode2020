@@ -4,7 +4,7 @@ My solutions for the 2020 edition of [Advent of Code](https://adventofcode.com/)
 ## Usage
 You must have Elixir installed to run this. You can use [asdf](https://asdf-vm.com) for that.
 
-Run `mix advent day [part] [--test data]` where:
+Run `mix aoc day [part] [--test data]` where:
 * `day` is the day for which to run the solution
 * `[part]` is the part of the day for which to run the solution (default: 1)
 * `[--test data]` is used for passing test data to the solver. If not present, the corresponding input file is used instead.
