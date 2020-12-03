@@ -7,8 +7,7 @@ defmodule Aoc.SolversTest do
           expectation = Aoc.KnownAnswer.get_answer(day, part),
           expectation != nil do
         test "part #{part}" do
-          args = [unquote(part), Aoc.Input.get_raw(unquote(day))]
-          answer = apply(:"Elixir.Aoc.Solvers.Day#{unquote(day)}", :solve, args)
+          answer = Aoc.Solver.solve(unquote(day), unquote(part), Aoc.Input.get_raw(unquote(day)))
 
           assert inspect(answer) == unquote(expectation)
         end

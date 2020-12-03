@@ -48,7 +48,7 @@ defmodule Mix.Tasks.Aoc do
 
   defp solve(day, part, input) do
     before_time = :os.system_time(:microsecond)
-    result = apply(:"Elixir.Aoc.Solvers.Day#{day}", :solve, [part, input])
+    result = Aoc.Solver.solve(day, part, input)
     after_time = :os.system_time(:microsecond)
 
     IO.puts("\nExecution time: #{after_time - before_time}µs")

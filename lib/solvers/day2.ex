@@ -2,14 +2,19 @@ defmodule Aoc.Solvers.Day2 do
   @behaviour Aoc.Solver
 
   @impl Aoc.Solver
+  def parse_input(input) do
+    input
+    |> String.split("\n")
+    |> Enum.map(&parse_line/1)
+  end
+
+  @impl Aoc.Solver
   def solve(1, input) do
-    parse_input(input)
-    |> Enum.count(&check_count_requirement/1)
+    Enum.count(input, &check_count_requirement/1)
   end
 
   def solve(2, input) do
-    parse_input(input)
-    |> Enum.count(&check_position_requirement/1)
+    Enum.count(input, &check_position_requirement/1)
   end
 
   defp check_count_requirement({min_count, max_count, letter, password}) do
@@ -19,14 +24,13 @@ defmodule Aoc.Solvers.Day2 do
   defp check_position_requirement({pos1, pos2, letter, password}) do
     check1 = String.at(password, pos1 - 1) == letter
     check2 = String.at(password, pos2 - 1) == letter
-
-    case {check1, check2} do
-      {false, false} -> false
-      {false, true} -> true
-      {true, false} -> true
-      {true, true} -> false
-    end
+    xor(check1, check2)
   end
+
+  defp xor(false, false), do: false
+  defp xor(false, true), do: true
+  defp xor(true, false), do: true
+  defp xor(true, true), do: false
 
   # Line example: 1-10 a: aaabbbcccddee
   defp parse_line(line) do
@@ -39,11 +43,5 @@ defmodule Aoc.Solvers.Day2 do
       String.trim(letter, ":"),
       password
     }
-  end
-
-  defp parse_input(input) do
-    input
-    |> String.split("\n")
-    |> Enum.map(&parse_line/1)
   end
 end
