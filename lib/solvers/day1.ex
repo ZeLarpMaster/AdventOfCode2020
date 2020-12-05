@@ -6,34 +6,32 @@ defmodule Aoc.Solvers.Day1 do
     input
     |> String.split()
     |> Enum.map(&String.to_integer/1)
+    |> MapSet.new()
   end
 
   @impl Aoc.Solver
-  def solve(1, input) do
-    [a, b] = find_sum(input)
-    a * b
-  end
+  def solve(1, input), do: find_depth_sum(input, 2)
+  def solve(2, input), do: find_depth_sum(input, 3)
 
-  def solve(2, input) do
-    [a, b, c] = find_three_sum(input)
-    a * b * c
-  end
-
-  defp find_three_sum(nums) do
-    map = MapSet.new(nums)
-
-    Enum.find_value(nums, fn a ->
-      Enum.find_value(nums, fn b ->
-        if MapSet.member?(map, 2020 - a - b) do
-          [a, b, 2020 - a - b]
-        end
-      end)
+  defp find_depth_sum(nums, depth) do
+    nums
+    |> find_depth_sum(depth, fn value ->
+      sum = 2020 - Enum.sum(value)
+      if Enum.member?(nums, sum), do: [sum | value]
     end)
+    |> Enum.reduce(&Kernel.*/2)
   end
 
-  defp find_sum(nums) do
-    map = MapSet.new(nums)
-    a = Enum.find(nums, fn a -> MapSet.member?(map, 2020 - a) end)
-    [a, 2020 - a]
+  defp find_depth_sum(_nums, 1, fun) do
+    fun.([])
+  end
+
+  defp find_depth_sum(nums, depth, fun) do
+    Enum.find_value(
+      nums,
+      &find_depth_sum(nums, depth - 1, fn value ->
+        fun.([&1 | value])
+      end)
+    )
   end
 end

@@ -1,19 +1,8 @@
 defmodule Aoc.Solvers.Day4 do
   @behaviour Aoc.Solver
 
-  @keys [
-    :byr, # Birth Year
-    :iyr, # Issue Year
-    :eyr, # Expiration Year
-    :hgt, # Height
-    :hcl, # Hair Color
-    :ecl, # Eye Color
-    :pid, # Passport ID
-    :cid  # Country ID
-  ]
-
+  @keys ~w(byr iyr eyr hgt hcl ecl pid cid)a
   @required_keys List.delete(@keys, :cid)
-
   @valid_eye_colors ~w(amb blu brn gry grn hzl oth)
 
   @impl Aoc.Solver
@@ -64,6 +53,7 @@ defmodule Aoc.Solvers.Day4 do
 
   defp check_height(value) do
     {height, unit} = String.split_at(value, -2)
+
     case unit do
       "cm" -> check_range(height, 150..193)
       "in" -> check_range(height, 59..76)
