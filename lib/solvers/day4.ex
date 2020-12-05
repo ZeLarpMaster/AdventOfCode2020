@@ -71,12 +71,8 @@ defmodule Aoc.Solvers.Day4 do
   defp parse_passport(passport) do
     passport
     |> String.split()
-    |> Enum.map(&parse_keyvalue/1)
+    |> Enum.map(&String.split(&1, ":"))
+    |> Enum.map(fn [key, value] -> {String.to_atom(key), value} end)
     |> Map.new()
-  end
-
-  defp parse_keyvalue(word) do
-    [key, value] = String.split(word, ":")
-    {String.to_atom(key), value}
   end
 end
