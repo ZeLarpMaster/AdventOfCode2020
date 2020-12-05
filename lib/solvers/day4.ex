@@ -13,15 +13,8 @@ defmodule Aoc.Solvers.Day4 do
   end
 
   @impl Aoc.Solver
-  def solve(1, input) do
-    input
-    |> Enum.count(&check_valid/1)
-  end
-
-  def solve(2, input) do
-    input
-    |> Enum.count(&check_valid_values/1)
-  end
+  def solve(1, input), do: Enum.count(input, &check_valid/1)
+  def solve(2, input), do: Enum.count(input, &check_valid_values/1)
 
   defp check_valid_values(passport) do
     Enum.all?(@required_keys, &check_valid_value(&1, Map.get(passport, &1)))
