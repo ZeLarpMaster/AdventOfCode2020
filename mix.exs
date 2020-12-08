@@ -21,6 +21,7 @@ defmodule Aoc.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:libgraph, "~> 0.13"},
       {:credo, "~> 1.5", only: [:dev], runtime: false}
     ]
   end
