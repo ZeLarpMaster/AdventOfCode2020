@@ -29,20 +29,14 @@ defmodule Aoc.Solvers.Day4 do
   defp check_valid_value(:iyr, value), do: check_range(value, 2010..2020)
   defp check_valid_value(:eyr, value), do: check_range(value, 2020..2030)
   defp check_valid_value(:hgt, value), do: check_height(value)
-  defp check_valid_value(:hcl, "#" <> value), do: check_hexa(value)
+  defp check_valid_value(:hcl, "#" <> value), do: check_length(value, 6) and check_hexa(value)
   defp check_valid_value(:ecl, value), do: value in @valid_eye_colors
-  defp check_valid_value(:pid, value), do: check_passport_id(value)
+  defp check_valid_value(:pid, value), do: check_length(value, 9) and check_passport_id(value)
   defp check_valid_value(_key, _value), do: false
 
-  defp check_passport_id(value) do
-    is_number = match?({_, ""}, Integer.parse(value))
-    String.length(value) == 9 and is_number
-  end
-
-  defp check_hexa(value) do
-    is_only_hexa = match?({_, ""}, Integer.parse(value, 16))
-    String.length(value) == 6 and is_only_hexa
-  end
+  defp check_length(value, length), do: String.length(value) == length
+  defp check_passport_id(value), do: match?({_, ""}, Integer.parse(value))
+  defp check_hexa(value), do: match?({_, ""}, Integer.parse(value, 16))
 
   defp check_height(value) do
     {height, unit} = String.split_at(value, -2)

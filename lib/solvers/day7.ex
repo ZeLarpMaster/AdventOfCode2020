@@ -18,13 +18,9 @@ defmodule Aoc.Solvers.Day7 do
     |> length()
   end
 
-  def solve(2, graph) do
-    count_bag(graph, "shiny gold") - 1
-  end
+  def solve(2, graph), do: count_bag(graph, "shiny gold") - 1
 
-  defp count_bag(graph, bag) do
-    count_inner_bags(graph, bag) + 1
-  end
+  defp count_bag(graph, bag), do: count_inner_bags(graph, bag) + 1
 
   defp count_inner_bags(graph, bag) do
     graph
@@ -46,11 +42,7 @@ defmodule Aoc.Solvers.Day7 do
     {String.to_integer(number), parse_bag(bag)}
   end
 
-  defp parse_bag(bag) do
-    bag
-    |> String.replace_suffix(" bags", "")
-    |> String.replace_suffix(" bag", "")
-  end
+  defp parse_bag(bag), do: String.replace(bag, ~r/ bags?/, "")
 
   # Graph points towards bags which don't contain any other bags
   defp compile_graph({bag, bags}, graph) do
