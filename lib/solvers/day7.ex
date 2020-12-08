@@ -2,7 +2,6 @@ defmodule Aoc.Solvers.Day7 do
   @behaviour Aoc.Solver
 
   @impl Aoc.Solver
-  @spec parse_input(String.t()) :: Graph.t()
   def parse_input(input) do
     input
     |> String.replace(".", "")
@@ -12,12 +11,26 @@ defmodule Aoc.Solvers.Day7 do
   end
 
   @impl Aoc.Solver
-  @spec solve(1 | 2, Graph.t()) :: any
   def solve(1, input) do
     input
     |> Graph.reaching(["shiny gold"])
     |> List.delete("shiny gold")
     |> length()
+  end
+
+  def solve(2, graph) do
+    count_bag(graph, "shiny gold") - 1
+  end
+
+  defp count_bag(graph, bag) do
+    count_inner_bags(graph, bag) + 1
+  end
+
+  defp count_inner_bags(graph, bag) do
+    graph
+    |> Graph.out_edges(bag)
+    |> Stream.map(fn %Graph.Edge{v2: bag, weight: number} -> number * count_bag(graph, bag) end)
+    |> Enum.sum()
   end
 
   defp parse_rule(rule) do
