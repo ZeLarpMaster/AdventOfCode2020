@@ -2,16 +2,19 @@ defmodule Aoc.Handheld do
   @moduledoc false
 
   # program: A map of instructions by address
+  # psize: Program Size
   # pc: Program Counter
   # fi: Fetched Instruction
   # acc: Accumulator
   # seen: Instructions seen
-  defstruct [:program, pc: 0, fi: nil, acc: 0, seen: MapSet.new()]
+  defstruct [:program, :psize, pc: 0, fi: nil, acc: 0, seen: MapSet.new()]
 
   @type inst :: {String.t(), integer()}
+  @type program :: %{optional(non_neg_integer) => inst()}
 
   @type t :: %__MODULE__{
-          program: %{optional(non_neg_integer) => inst()},
+          program: program(),
+          psize: non_neg_integer,
           pc: non_neg_integer,
           fi: inst() | nil,
           acc: integer,
@@ -29,20 +32,28 @@ defmodule Aoc.Handheld do
     |> from_program()
   end
 
-  @spec has_looped?(t()) :: boolean
-  def has_looped?(handheld), do: MapSet.member?(handheld.seen, handheld.pc)
+  @spec get_program(t()) :: program()
+  def get_program(handheld), do: handheld.program
 
-  @spec run_until_loop(t()) :: integer
-  def run_until_loop(handheld) do
-    if has_looped?(handheld) do
-      get_acc(handheld)
-    else
-      handheld
-      |> record_seen()
-      |> load()
-      |> execute()
-      |> increment_pc()
-      |> run_until_loop()
+  @spec update_program(t(), non_neg_integer, inst()) :: t()
+  def update_program(handheld, address, new_inst), do: put_in(handheld.program[address], new_inst)
+
+  @spec run(t()) :: {:looped | :completed, integer}
+  def run(handheld) do
+    cond do
+      has_looped?(handheld) ->
+        {:looped, get_acc(handheld)}
+
+      has_completed?(handheld) ->
+        {:completed, get_acc(handheld)}
+
+      true ->
+        handheld
+        |> record_seen()
+        |> load()
+        |> execute()
+        |> increment_pc()
+        |> run()
     end
   end
 
@@ -62,6 +73,9 @@ defmodule Aoc.Handheld do
 
   # ===== END OF INSTRUCTIONS =====
 
+  defp has_looped?(handheld), do: MapSet.member?(handheld.seen, handheld.pc)
+  defp has_completed?(handheld), do: handheld.pc >= handheld.psize
+
   defp parse_instruction(line) do
     [inst, arg] = String.split(line)
     {inst, String.to_integer(arg)}
@@ -73,5 +87,6 @@ defmodule Aoc.Handheld do
   defp record_seen(handheld), do: update_in(handheld.seen, &MapSet.put(&1, handheld.pc))
   defp increment_acc(handheld, value), do: update_in(handheld.acc, &(&1 + value))
   defp increment_pc(handheld, value \\ 1), do: update_in(handheld.pc, &(&1 + value))
-  defp from_program(program), do: %__MODULE__{program: program}
+  defp get_psize(program), do: Enum.max(Map.keys(program)) + 1
+  defp from_program(program), do: %__MODULE__{program: program, psize: get_psize(program)}
 end
