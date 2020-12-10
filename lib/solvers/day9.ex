@@ -18,6 +18,40 @@ defmodule Aoc.Solvers.Day9 do
     find_invalid(preamble, leftover)
   end
 
+  def solve(2, input) do
+    invalid_number = solve(1, input)
+    sub_array = find_contiguous(input, invalid_number)
+    Enum.min(sub_array) + Enum.max(sub_array)
+  end
+
+  defp find_contiguous(input, target) do
+    Enum.reduce(input, {0, :queue.new()}, fn element, acc ->
+      process_value(element, acc, target)
+    end)
+  catch
+    {_sum, queue} -> :queue.to_list(queue)
+  end
+
+  defp process_value(element, {sum, queue}, target) do
+    cond do
+      element > target and :queue.is_empty(queue) -> {sum, queue}
+      element + sum > target -> process_value(element, pop({sum, queue}), target)
+      element + sum == target -> throw(push(element, {sum, queue}))
+      true -> push(element, {sum, queue})
+    end
+  end
+
+  defp pop({sum, queue}) do
+    case :queue.out(queue) do
+      {:empty, queue} -> {0, queue}
+      {{:value, value}, queue} -> {sum - value, queue}
+    end
+  end
+
+  defp push(value, {sum, queue}) do
+    {sum + value, :queue.in(value, queue)}
+  end
+
   defp find_invalid(_, []), do: "Nothing found :("
 
   defp find_invalid(list, [value | values]) do
