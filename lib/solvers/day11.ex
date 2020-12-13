@@ -22,16 +22,23 @@ defmodule Aoc.Solvers.Day11 do
   end
 
   # ===== Simulation functions =====
-  defp simulate_until_unchanged(map) do
-    new_map =
-      map.map
-      |> Enum.map(fn {position, _seat} = element -> {position, simulate_seat(map, element)} end)
-      |> Map.new()
+  defp simulate_until_unchanged(map, changed \\ nil) do
+    changed = changed || Map.keys(map.map)
+
+    {new_map, changed} =
+      Enum.reduce(changed, {map.map, []}, fn position, {new_map, changed} ->
+        prev_seat = Map.fetch!(map.map, position)
+        seat = simulate_seat(map, {position, prev_seat})
+        new_map = Map.put(new_map, position, seat)
+        changed = if seat != prev_seat, do: [position | changed], else: changed
+        {new_map, changed}
+      end)
 
     if new_map == map.map do
       new_map
     else
-      simulate_until_unchanged(put_in(map.map, new_map))
+      put_in(map.map, new_map)
+      |> simulate_until_unchanged(changed)
     end
   end
 

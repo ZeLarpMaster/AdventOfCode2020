@@ -22,7 +22,7 @@ defmodule Aoc.MixProject do
   defp deps do
     [
       {:libgraph, "~> 0.13"},
-      {:exprof, "~>0.2.3"},
+      {:exprof, "~> 0.2.3"},
       {:credo, "~> 1.5", only: [:dev], runtime: false}
     ]
   end
