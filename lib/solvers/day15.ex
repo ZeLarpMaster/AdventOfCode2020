@@ -10,8 +10,11 @@ defmodule Aoc.Solvers.Day15 do
   end
 
   @impl Aoc.Solver
-  def solve(1, input) do
-    speak(0, Map.new(Enum.with_index(input, 1)), length(input) + 1, 2020)
+  def solve(1, input), do: start_speaking(input, 2020)
+  def solve(2, input), do: start_speaking(input, 30_000_000)
+
+  defp start_speaking(input, max_turn) do
+    speak(0, Map.new(Enum.with_index(input, 1)), length(input) + 1, max_turn)
   end
 
   defp speak(number, _, turn, max_turn) when turn == max_turn, do: number
