@@ -14,7 +14,20 @@ defmodule Aoc.Solvers.Day15 do
   def solve(2, input), do: start_speaking(input, 30_000_000)
 
   defp start_speaking(input, max_turn) do
-    {:ok, result} = __MODULE__.Rust.start_speaking(input, max_turn)
-    result
+    speak(0, Map.new(Enum.with_index(input, 1)), length(input) + 1, max_turn)
+  end
+
+  defp speak(number, _, turn, max_turn) when turn == max_turn, do: number
+
+  defp speak(number, spoken_map, turn, max_turn) do
+    last_spoken = Map.get(spoken_map, number)
+    spoken_map = Map.put(spoken_map, number, turn)
+
+    if last_spoken == nil do
+      0
+    else
+      turn - last_spoken
+    end
+    |> speak(spoken_map, turn + 1, max_turn)
   end
 end
